@@ -92,3 +92,34 @@ function onBodyLoad(){
 	console.log(getPropStrAndContent(teststr));
 	console.log(parseProps(getPropStrAndContent(teststr).propstr))
 }
+
+function showItem(name){
+	_('#title').value = name;
+	_('#ta').innerHTML = G[name].content.replace('\n','<br/>').replace(/\[\[([^\]\|]+)\|([^\]]+)\]\]/gi,'<a title="$1" data-key="$1">$2</a>')
+									.replace(/\[\[([^\]\|]+)\]\]/gi,'<a title="$1" data-key="$1">$1</a>');
+
+	[... _('#ta').getElementsByTagName('a')].forEach((elt)=>{
+		elt.onclick = function(){showItem(this.dataset['key']);};
+	})				
+}
+
+function onSearchResultClick(elt){
+	console.log(elt);
+	showItem(elt.innerHTML)
+}
+
+
+function onSearchInput(){
+	var q = _('#search').value;
+
+	_("#searchResults").innerHTML = '';
+
+	_("#searchResults").innerHTML = Object.keys(G)
+										   .filter((key) => key.toLowerCase().indexOf(q.toLowerCase())>=0)
+										   .map((key)=>{
+	   	return '<div onclick="onSearchResultClick(this);">'+key+'</div><br/>'
+	}).join('');
+}
+
+
+//

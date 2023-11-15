@@ -3,13 +3,17 @@
 <head>
 	<meta charset="utf-8">
 	<title>L</title>
-
+<link rel="stylesheet" type="text/css" href="style.css">
 <script type="text/javascript" src="noGit/D.js"></script>
 
+<script type="text/javascript" src="misc.js"></script>
 <script type="text/javascript" src="main.js"></script>
 
 </head>
 <body onload="onBodyLoad();">
-
+	<div id="LEFT"><input id="search" oninput="onSearchInput();"><div id="searchResults"></div></div>
+	<div id="MID"><input id="title"><br/><div id="ta" contenteditable="true"></div></div>
+	<div id="RIGHT"></div>
+	
 </body>
 </html>
