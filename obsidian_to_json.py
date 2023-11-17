@@ -54,6 +54,10 @@ def main():
 	outpath = input('Enter output filename [noGit/D.js]: ')
 	if outpath == '':
 		outpath = 'noGit/D.js'
+
+	if not os.path.isdir(os.path.dirname(outpath)):
+		os.mkdir(os.path.dirname(outpath))
+
 	if os.path.isfile(outpath):
 		rename(outpath)
 
