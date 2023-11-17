@@ -1,0 +1,24 @@
+
+#LEFT{
+	float: left;
+	height: 100%;
+	width: 25%;
+}
+
+#MID{
+	float:left;
+	width: 50%;
+}
+
+#RIGHT {
+	float: right;
+}
+
+#ta {
+	width: 100%;
+}
+
+#ta a{
+	text-decoration: underline;
+	color: blue;
+}
