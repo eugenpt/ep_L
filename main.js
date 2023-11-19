@@ -2,7 +2,7 @@
 
 function getLinks(src){
 	return [...src.matchAll(/\[\[([^\]\|]+)(\|[^\]]+)?\]\]/gi)].map((m)=>{
-		return {'link': m[1], 'alias': m[2]}
+		return {'to': m[1], 'alias': m[2], 'match': m}
 	})
 }
 
@@ -67,6 +67,15 @@ function parseProps(s){
 	return props;
 }
 
+window.addEventListener("popstate", (event) => {
+  console.log(
+    `location: ${document.location}, state: ${JSON.stringify(event.state)}`,
+  );
+
+});
+
+G = {};
+
 function onBodyLoad(){
 	console.log(D)
 
@@ -76,13 +85,17 @@ function onBodyLoad(){
 		props = parseProps(t.propstr);
 		var prop_links = (
 			(props.is||[]).map((v) => { return { 'to': v, 'type': 'is' }})
-			+ (props.related_to||[]).map((v) => { return { 'to': v, 'type': 'related_to' }})
+			.concat((props.related_to||[]).map((v) => { return { 'to': v, 'type': 'related_to' }}))
 		);
+		content_links = getLinks(t.content);
+
 		G[item.name] = {
 			'src': item,
-			'links': getLinks(item.content).map((m)=>m.link),
+			'linked': content_links.map((m)=>m.to).concat(prop_links.map((m)=>m.to)),
 			'propstr': t.propstr,
 			'content': t.content,
+			'links':  content_links.concat(prop_links),
+			'location': item.root,
 		}
 	})
 
@@ -95,11 +108,14 @@ function onBodyLoad(){
 
 function showItem(name){
 	_('#title').value = name;
-	_('#ta').innerHTML = G[name].content.replace('\n','<br/>').replace(/\[\[([^\]\|]+)\|([^\]]+)\]\]/gi,'<a title="$1" data-key="$1">$2</a>')
-									.replace(/\[\[([^\]\|]+)\]\]/gi,'<a title="$1" data-key="$1">$1</a>');
+	_('#ta').innerHTML = '<p>'+G[name].content.replace(/\[\[([^\]\|]+)\|([^\]]+)\]\]/gi,'<a title="$1" data-key="$1">$2</a>')
+									.replace(/\[\[([^\]\|]+)\]\]/gi,'<a title="$1" data-key="$1">$1</a>').replaceAll('\n','</p><p>')+'</p>';
 
 	[... _('#ta').getElementsByTagName('a')].forEach((elt)=>{
-		elt.onclick = function(){showItem(this.dataset['key']);};
+		elt.onclick = function(){
+			showItem(this.dataset['key']);
+			history.pushState({ key: key }, key, "?key=" + btoa(key));
+		};
 	})				
 }
 
