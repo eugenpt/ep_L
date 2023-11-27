@@ -1,24 +1,92 @@
 
-#LEFT{
-	float: left;
+html, 
+body {
+    height: 100%;
+}
+
+#page {
 	height: 100%;
-	width: 25%;
+/*	background-color: pink;*/
+	display: grid;
+	grid-template-areas:
+		'header header header header header'
+		'leftcol leftdragbar tabs tabs tabs'
+		'leftcol leftdragbar tabpages rightdragbar rightcol'
+		'leftcol leftdragbar footer footer footer';
+	grid-template-rows: min-content 1fr 9fr 1fr;
+	grid-template-columns: 2fr 6px 6fr 6px 2fr;	
 }
 
-#MID{
-	float:left;
-	width: 50%;
+/*****************************/
+#header {
+/*	background-color: lightblue;*/
+	overflow: auto;
+	grid-area: header;
 }
 
-#RIGHT {
-	float: right;
+#leftcol {
+/*	background-color: #aaaaaa;*/
+	overflow: auto;
+	grid-area: leftcol;
+}
+
+#leftdragbar {
+	background-color: black;
+	grid-area: leftdragbar;
+	cursor: ew-resize;
+}
+
+#tabs {
+/*	background-color: #cccccc;*/
+	overflow: auto;
+	grid-area: tabs;
+
+  display: grid;
+  place-items: center;	
+
+  border-bottom: 5px solid;
+}
+
+#tabpages {
+/*	background-color: #888888;*/
+	overflow: auto;
+	grid-area: tabpages;
+}
+
+#rightdragbar {
+	background-color: black;
+	grid-area: rightdragbar;
+	cursor: ew-resize;
+}
+
+
+#rightcol {
+/*	background-color: #aaaaaa;*/
+	overflow: auto;
+	grid-area: rightcol;
+}
+
+#footer {
+/*	background-color: lightblue;*/
+	overflow: auto;
+	grid-area: footer;
+
+	border-top: 5px solid;
+}
+
+
+/*-----------------------------------------------------------------------*/
+
+input {
+	width: 80%;
 }
 
 #ta {
 	width: 100%;
 }
 
-#ta a{
+a.local-a{
 	text-decoration: underline;
 	color: blue;
+	cursor: pointer;
 }

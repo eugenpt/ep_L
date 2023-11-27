@@ -92,14 +92,24 @@ function onBodyLoad(){
 		content_links = getLinks(t.content);
 
 		G[item.name] = {
+			'name': name,
 			'src': item,
 			'linked': content_links.map((m)=>m.to).concat(prop_links.map((m)=>m.to)),
 			'propstr': t.propstr,
 			'content': t.content,
 			'links':  content_links.concat(prop_links),
 			'location': item.root,
+			'backlinks': [],
 		}
 	})
+
+	for(var name in G){
+		for(var link of G[name].links){
+			link.from = name;
+			if(G[link.to])
+				G[link.to]['backlinks'].push(link);
+		}
+	}
 
 	teststr='---\ntest: test value\ntestemptylist:\ntestlist:\n   - item1\n - item2\n---\nLALA\n---\nqq:qq_value\n---\nKSKSKS\n'
 	s = getPropStrAndContent(teststr).propstr
@@ -113,15 +123,35 @@ function onBodyLoad(){
   }
 }
 
-function showItem(name){
-	_('#title').value = name;
-	_('#ta').innerHTML = '<p>'+G[name].content.replace(/\[\[([^\]\|]+)\|([^\]]+)\]\]/gi,'<a title="$1" data-key="$1">$2</a>')
-									.replace(/\[\[([^\]\|]+)\]\]/gi,'<a title="$1" data-key="$1">$1</a>').replaceAll('\n','</p><p>')+'</p>';
+function emptyG(name, linkedFrom){
+	return {
+			'name': name,
+			'src': '',
+			'linked': [],
+			'propstr': '',
+			'content': '',
+			'links':  [],
+			'location': G[linkedFrom]?G[linkedFrom].root : '',
+			'backlinks': [ {'to':name, 'from':linkedFrom, 'type': 'related_to'} ],
+	}
+}
 
-	[... _('#ta').getElementsByTagName('a')].forEach((elt)=>{
+function showItem(name, linkedFrom){
+	if (!(name in G)){
+		G[name] = emptyG(
+			name, linkedFrom
+		);
+	}
+	_('#title').value = name;
+	_('#ta').innerHTML = '<p>'+G[name].content.replace(/\[\[([^\]\|]+)\|([^\]]+)\]\]/gi,'<a class="local-a" title="$1" data-key="$1">$2</a>')
+									.replace(/\[\[([^\]\|]+)\]\]/gi,'<a class="local-a" title="$1" data-key="$1">$1</a>').replaceAll('\n','</p><p>')+'</p>';
+
+	_('#rightcol').innerHTML	= G[name].backlinks.map(link=>'<a class="local-a" title="'+link.from+'" data-key="'+link.from+'">'+link.from+'</a>').join('<br/><br/>');
+
+	[... document.getElementsByClassName('local-a')].forEach((elt)=>{
 		elt.onclick = function(){
 			var key = this.dataset['key'];
-			showItem(key);
+			showItem(key, name);
 			history.pushState({ key: key }, key, "?key=" + encodeURIComponent(key));
 		};
 	})				

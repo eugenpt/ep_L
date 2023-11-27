@@ -4,16 +4,41 @@
 	<meta charset="utf-8">
 	<title>L</title>
 <link rel="stylesheet" type="text/css" href="style.css">
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.0/FileSaver.min.js" integrity="sha512-csNcFYJniKjJxRWRV1R7fvnXrycHP6qDR21mgz1ZP55xY5d+aHLfo9/FcGDQLfn2IfngbAHd8LdfsagcCqgTcQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js" integrity="sha512-XMVd28F1oH/O71fzwBnV7HucLxVwtxf26XV8P4wPk26EDxuGZ91N8bsOttmnomcCD3CS5ZMRL50H0GgOHvegtg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
 <script type="text/javascript" src="noGit/D.js"></script>
 
+<script type="text/javascript" src="resizing_columns.js"></script>
 <script type="text/javascript" src="misc.js"></script>
 <script type="text/javascript" src="main.js"></script>
 
 </head>
-<body onload="onBodyLoad();">
-	<div id="LEFT"><input id="search" oninput="onSearchInput();"><div id="searchResults"></div></div>
-	<div id="MID"><input id="title"><br/><div id="ta" contenteditable="true"></div></div>
-	<div id="RIGHT"></div>
-	
+<body onload="onBodyLoad();" onresize="ResetColumnSizes()">
+	<!-- https://codepen.io/lukerazor/pen/GVBMZK -->
+	<div id="page" onmouseup="EndDrag()" onmousemove="OnDrag(event)">
+		<div id="header">
+			Header
+		</div>
+		<div id="leftcol">
+			Left Col <br/>
+			<input id="search" oninput="onSearchInput();"><div id="searchResults"></div>
+		</div>
+		<div id="leftdragbar" onmousedown="StartLeftDrag()"></div>
+		<div id="tabs">
+			<input id="title">
+		</div>
+		<div id="tabpages">
+			<div id="ta" contenteditable="true"></div>
+		</div>
+		<div id="rightdragbar" onmousedown="StartRightDrag()"></div>
+		<div id="rightcol">
+			Rightcol
+		</div>
+		<div id="footer">
+			Footer
+		</div>
+	</div>
 </body>
 </html>
