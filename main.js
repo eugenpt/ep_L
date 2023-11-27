@@ -71,7 +71,9 @@ window.addEventListener("popstate", (event) => {
   console.log(
     `location: ${document.location}, state: ${JSON.stringify(event.state)}`,
   );
-
+  if((event.state) && (event.state.key)){
+  	showItem(decodeURIComponent(event.state.key));
+  }
 });
 
 G = {};
@@ -104,6 +106,11 @@ function onBodyLoad(){
 	console.log(teststr);
 	console.log(getPropStrAndContent(teststr));
 	console.log(parseProps(getPropStrAndContent(teststr).propstr))
+
+  var url_key = getURLparam('key');
+  if(url_key && G[url_key]){
+  	showItem(url_key);
+  }
 }
 
 function showItem(name){
@@ -113,8 +120,9 @@ function showItem(name){
 
 	[... _('#ta').getElementsByTagName('a')].forEach((elt)=>{
 		elt.onclick = function(){
-			showItem(this.dataset['key']);
-			history.pushState({ key: key }, key, "?key=" + btoa(key));
+			var key = this.dataset['key'];
+			showItem(key);
+			history.pushState({ key: key }, key, "?key=" + encodeURIComponent(key));
 		};
 	})				
 }
