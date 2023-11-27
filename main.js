@@ -6,6 +6,12 @@ function getLinks(src){
 	})
 }
 
+function getHashtags(src){
+	return [...src.matchAll(/(#[\w/]+)/gi)].map((m)=>{
+		return {'to': m[1], 'match': m, 'type': 'has_hashtag'}
+	})
+}
+
 function getPropStrAndContent(src){
 	var m = [...src.matchAll(/^---\n(.+?)---\n/gis)];
 	if(m.length==0){
@@ -44,7 +50,7 @@ function parseProps(s){
 				console.warn('?? line='+line);
 				continue
 			}
-			console.log('adding '+item_match[1]+' to '+now_prop)
+			// console.log('adding '+item_match[1]+' to '+now_prop)
 			props[now_prop].push(item_match[1])
 		} else {
 			if(match[2].length==0){
@@ -78,6 +84,23 @@ window.addEventListener("popstate", (event) => {
 
 G = {};
 
+function processRawHashtag(h, note_name){
+	var path = h.split('/');
+	var last_name = null;
+	for(var j=0 ; j<path.length ; j++){
+		var name = path.slice(0,j+1).join('/');
+		if(!G[name]){
+			G[name] = emptyG(name);
+			if(last_name){
+				G[name].links.push({
+					'to': last_name, 'from': name, 'type': 'is',
+				});
+			}
+		}
+		last_name = name;
+	}
+}
+
 function onBodyLoad(){
 	console.log(D)
 
@@ -91,13 +114,18 @@ function onBodyLoad(){
 		);
 		content_links = getLinks(t.content);
 
+		hashtag_links = getHashtags(t.content);
+		for(var h of hashtag_links){
+			processRawHashtag(h.to, item)
+		}
+
 		G[item.name] = {
 			'name': name,
 			'src': item,
 			'linked': content_links.map((m)=>m.to).concat(prop_links.map((m)=>m.to)),
 			'propstr': t.propstr,
 			'content': t.content,
-			'links':  content_links.concat(prop_links),
+			'links':  content_links.concat(prop_links).concat(hashtag_links),
 			'location': item.root,
 			'backlinks': [],
 		}
